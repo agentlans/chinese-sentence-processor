@@ -101,7 +101,7 @@ The output file will also be in `.jsonl` format, containing cleaned and split se
 
 ## License
 
-This project is licensed under the MIT License. See `LICENSE` for details.
+This project is licensed under the GNU General Public License v3. See `LICENSE` for details.
 
 ## Acknowledgments
 
