@@ -95,7 +95,7 @@ public:
     }
 };
 
-void processJsonlFile(const std::string& inputFilename, const std::string& outputFilename, int num_sents) {
+void processJsonlFile(const std::string& inputFilename, const std::string& outputFilename, int num_sents, int min_length, int max_length) {
     Trie lines;
     std::ifstream inputFile(inputFilename);
     std::ofstream outputFile(outputFilename);
@@ -123,7 +123,7 @@ void processJsonlFile(const std::string& inputFilename, const std::string& outpu
                 trimmed_sentence.trim();
                 int32_t sentence_len = trimmed_sentence.length();
                 
-                if (7 <= sentence_len && sentence_len <= 150) {
+                if (min_length <= sentence_len && sentence_len <= max_length) {
                     if (lines.insert(trimmed_sentence)) {
                         std::string utf8_sentence;
                         trimmed_sentence.toUTF8String(utf8_sentence);
@@ -144,14 +144,16 @@ void processJsonlFile(const std::string& inputFilename, const std::string& outpu
 
 int main(int argc, char* argv[]) {
     std::string inputFile, outputFile;
-    int numSentences;
+    int numSentences, minLength, maxLength;
 
     po::options_description desc("Allowed options");
     desc.add_options()
         ("help", "produce help message")
         ("input,i", po::value<std::string>(&inputFile)->required(), "input file name")
         ("output,o", po::value<std::string>(&outputFile)->required(), "output file name")
-        ("sentences,s", po::value<int>(&numSentences)->required(), "number of sentences to process");
+        ("sentences,s", po::value<int>(&numSentences)->required(), "number of sentences to process")
+        ("min-length,m", po::value<int>(&minLength)->default_value(7), "minimum sentence length")
+        ("max-length,M", po::value<int>(&maxLength)->default_value(150), "maximum sentence length");
 
     po::variables_map vm;
     try {
@@ -168,7 +170,7 @@ int main(int argc, char* argv[]) {
         return 0;
     }
 
-    processJsonlFile(inputFile, outputFile, numSentences);
+    processJsonlFile(inputFile, outputFile, numSentences, minLength, maxLength);
     
     return 0;
 }
